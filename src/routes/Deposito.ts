@@ -43,7 +43,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Actualizar un depósito
+// Actualizar un depósitoss
 router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const { nombre, ubicacion } = req.body;
