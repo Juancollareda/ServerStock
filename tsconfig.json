@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5", // O la versión que prefieras
+    "module": "commonjs", // O "esnext" si prefieres usar ES Modules
+    "jsx": "react-jsx", // Configura el soporte para JSX
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist", // O el directorio que prefieras
+    "rootDir": "./src", // Asegúrate de que apunte a tu directorio fuente
+    // ... otras opciones que necesites
+  },
+  "include": ["src/**/*"], // Incluye todos los archivos en el directorio src
+  "exclude": ["node_modules", "dist"] // Excluye node_modules y dist
+}

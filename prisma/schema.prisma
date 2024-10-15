@@ -1,0 +1,81 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Proveedor {
+  id_proveedor   Int      @id @default(autoincrement())
+  nombre         String
+  email          String
+  telefono       String?  // Opcional
+  direccion      String?  // Opcional
+  nombre_empresa String?  // Opcional
+  dni            String?  // Opcional
+  foto           String   // Ruta de archivo
+  articulos      Product[]  // Relación con productos
+}
+
+model Product {
+  id_producto    Int      @id @default(autoincrement())
+  nombre_producto String
+  codigo_barras   String
+  descripcion     String
+  cantidad_stock  Int
+  id_proveedor    Int
+  proveedor       Proveedor @relation(fields: [id_proveedor], references: [id_proveedor])
+  precio          Float
+  detallesPedido  OrderDetail[]
+  depositos       DepositoProduct[]  // Relación con la tabla intermedia
+}
+
+model Client {
+  id_cliente   Int      @id @default(autoincrement())
+  usuario      String
+  contrasena   String  // Cifrada
+  email        String
+  nombre       String
+  dni          String?  // Opcional
+  pedidos      Pedido[]
+}
+
+model Pedido {
+  id_pedido    Int      @id @default(autoincrement())
+  id_cliente   Int
+  fecha_pedido DateTime
+  estado_pedido String
+  cliente      Client @relation(fields: [id_cliente], references: [id_cliente])
+  detalles     OrderDetail[]
+}
+
+model OrderDetail {
+  id_detalle_pedido Int    @id @default(autoincrement())
+  id_pedido         Int
+  id_producto       Int
+  cantidad          Int
+  precio_unitario   Float
+  direccion         String?  // Opcional
+  pedido            Pedido   @relation(fields: [id_pedido], references: [id_pedido])
+  producto          Product  @relation(fields: [id_producto], references: [id_producto])
+}
+
+model Deposito {
+  id_deposito  Int      @id @default(autoincrement())
+  nombre       String
+  ubicacion    String
+  productos    DepositoProduct[]  // Relación con la tabla intermedia
+}
+
+model DepositoProduct {
+  id_deposito  Int
+  id_producto  Int
+  deposito     Deposito @relation(fields: [id_deposito], references: [id_deposito])
+  producto     Product  @relation(fields: [id_producto], references: [id_producto])
+  
+  @@id([id_deposito, id_producto])  // Clave compuesta para asegurar que no haya duplicados
+}
