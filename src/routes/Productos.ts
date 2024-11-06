@@ -14,7 +14,11 @@ router.post('/', async (req: Request, res: Response) => {
     });
     res.json(producto);
   } catch (error) {
-    res.status(500).json({ error: 'Error al crear el producto' });
+    res.status(500).json({ error: 'Error al crear el producto'  , 
+
+
+    });
+    console.log(req.body)
   }
 });
 
@@ -23,10 +27,11 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     const productos = await prisma.product.findMany();
     res.json(productos);
+    console.log(req.body)
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener los productos' });
+    res.status(500).json({error: 'Error al obtener los productos' });
   }
-});
+}); 
 
 // Obtener un producto por ID
 router.get('/:id', async (req: Request, res: Response) => {
