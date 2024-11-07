@@ -49,6 +49,21 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
+//idproverdor
+router.get('/:id_proveedor', async (req: Request, res: Response) => {
+  const { id_proveedor } = req.params;
+
+  try {
+    const producto = await prisma.product.findUnique({
+      where: { id_producto: parseInt(id_proveedor) },
+    });
+    if (!producto) return res.status(404).json({ error: 'Producto no encontrado id_proveedor' });
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el producto por id_proveedor' });
+  }
+});
+
 // Actualizar un producto
 router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
