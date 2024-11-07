@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 const router = Router();
 const prisma = new PrismaClient();
+//5myywCl2XU6qj
 
 // Crear un nuevo producto
 router.post('/', async (req: Request, res: Response) => {
