@@ -19,7 +19,7 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Obtener todos los proveedores
+// Obtener todos los proveedoress
 router.get('/', async (req: Request, res: Response) => {
   try {
     const proveedores = await prisma.proveedor.findMany();
