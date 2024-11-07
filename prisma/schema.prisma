@@ -13,6 +13,7 @@ model Proveedor {
   id_proveedor   Int      @id @default(autoincrement())
   nombre         String
   email          String
+  contrasenia    String
   telefono       String?  // Opcional
   direccion      String?  // Opcional
   nombre_empresa String?  // Opcional
