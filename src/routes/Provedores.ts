@@ -78,15 +78,18 @@ router.delete('/:id', async (req: Request, res: Response) => {
 // Obtener un proveedor por email
 router.get('/email/:email', async (req: Request, res: Response) => {
   const { email } = req.params;
+  console.log(email)
 
   try {
     const proveedor = await prisma.proveedor.findFirst({
       where: { email: email },
     });
     if (!proveedor) {
+     
       return res.status(404).json({ error: 'Proveedor no encontrado' });
     }
     res.json(proveedor);
+
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener el proveedor por email' });
   }
