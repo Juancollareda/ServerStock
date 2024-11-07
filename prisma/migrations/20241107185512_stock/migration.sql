@@ -3,6 +3,7 @@ CREATE TABLE "Proveedor" (
     "id_proveedor" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nombre" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "contrasenia" TEXT NOT NULL,
     "telefono" TEXT,
     "direccion" TEXT,
     "nombre_empresa" TEXT,

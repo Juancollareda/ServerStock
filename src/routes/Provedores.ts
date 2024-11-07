@@ -6,16 +6,16 @@ const prisma = new PrismaClient();
 
 // Crear un nuevo proveedor
 router.post('/', async (req: Request, res: Response) => {
-  const { nombre, email, telefono, direccion, nombre_empresa, dni, foto } = req.body;
+  const { nombre, email, telefono, direccion, nombre_empresa, dni, foto, contrasenia } = req.body;
 
   try {
     const proveedor = await prisma.proveedor.create({
-      data: { nombre, email, telefono, direccion, nombre_empresa, dni, foto },
+      data: { nombre, email, telefono, direccion, nombre_empresa, dni, foto, contrasenia },
     });
     res.json(proveedor);
   } catch (error) {
     res.status(500).json({ error: 'Error al crear el proveedor' });
-    console.log(req.body)
+    console.log(req.body);
   }
 });
 
