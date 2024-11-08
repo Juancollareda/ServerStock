@@ -3,25 +3,32 @@ import { PrismaClient } from '@prisma/client';
 
 const router = Router();
 const prisma = new PrismaClient();
-//5myywCl2XU6qj
 
 // Crear un nuevo producto
 router.post('/', async (req: Request, res: Response) => {
-  const { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio } = req.body;
+  const { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio, tags } = req.body;
 
   try {
-    const producto = await prisma.product.create({
-      data: { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio },
+    // Verificar si el proveedor existe
+    const proveedor = await prisma.proveedor.findUnique({
+      where: { id_proveedor: id_proveedor }
     });
+
+    if (!proveedor) {
+      return res.status(404).json({ error: 'Proveedor no encontrado' });
+    }
+
+    const producto = await prisma.product.create({
+      data: { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio, tags },
+    });
+
     res.json(producto);
   } catch (error) {
-    res.status(500).json({ error: 'Error al crear el producto'  , 
-
-
-    });
-    console.log(req.body)
+    console.error(error);  // Mostrar el error en la consola para diagnóstico
+    res.status(500).json({ error: 'Error al crear el producto' });
   }
 });
+
 
 // Obtener todos los productos
 router.get('/', async (req: Request, res: Response) => {

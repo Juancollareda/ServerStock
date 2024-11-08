@@ -18,6 +18,7 @@ CREATE TABLE "Product" (
     "codigo_barras" TEXT NOT NULL,
     "descripcion" TEXT NOT NULL,
     "cantidad_stock" INTEGER NOT NULL,
+    "tags" TEXT,
     "id_proveedor" INTEGER NOT NULL,
     "precio" REAL NOT NULL,
     CONSTRAINT "Product_id_proveedor_fkey" FOREIGN KEY ("id_proveedor") REFERENCES "Proveedor" ("id_proveedor") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -50,23 +51,10 @@ CREATE TABLE "OrderDetail" (
     "cantidad" INTEGER NOT NULL,
     "precio_unitario" REAL NOT NULL,
     "direccion" TEXT,
+    "estado_proveedor" TEXT NOT NULL DEFAULT 'pendiente',
     CONSTRAINT "OrderDetail_id_pedido_fkey" FOREIGN KEY ("id_pedido") REFERENCES "Pedido" ("id_pedido") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "OrderDetail_id_producto_fkey" FOREIGN KEY ("id_producto") REFERENCES "Product" ("id_producto") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- CreateTable
-CREATE TABLE "Deposito" (
-    "id_deposito" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nombre" TEXT NOT NULL,
-    "ubicacion" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "DepositoProduct" (
-    "id_deposito" INTEGER NOT NULL,
-    "id_producto" INTEGER NOT NULL,
-
-    PRIMARY KEY ("id_deposito", "id_producto"),
-    CONSTRAINT "DepositoProduct_id_deposito_fkey" FOREIGN KEY ("id_deposito") REFERENCES "Deposito" ("id_deposito") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "DepositoProduct_id_producto_fkey" FOREIGN KEY ("id_producto") REFERENCES "Product" ("id_producto") ON DELETE RESTRICT ON UPDATE CASCADE
-);
+-- CreateIndex
+CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");

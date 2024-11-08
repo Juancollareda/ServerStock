@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,7 +6,6 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-
 
 model Proveedor {
   id_proveedor   Int      @id @default(autoincrement())
@@ -28,18 +26,18 @@ model Product {
   codigo_barras   String
   descripcion     String
   cantidad_stock  Int
+  tags            String  // Opcional
   id_proveedor    Int
   proveedor       Proveedor @relation(fields: [id_proveedor], references: [id_proveedor])
   precio          Float
   detallesPedido  OrderDetail[]
-  depositos       DepositoProduct[]  // Relación con la tabla intermedia
 }
 
 model Client {
   id_cliente   Int      @id @default(autoincrement())
   usuario      String
   contrasena   String  // Cifrada
-  email        String
+  email        String @unique
   nombre       String
   dni          String?  // Opcional
   pedidos      Pedido[]
@@ -63,20 +61,5 @@ model OrderDetail {
   direccion         String?  // Opcional
   pedido            Pedido   @relation(fields: [id_pedido], references: [id_pedido])
   producto          Product  @relation(fields: [id_producto], references: [id_producto])
-}
-
-model Deposito {
-  id_deposito  Int      @id @default(autoincrement())
-  nombre       String
-  ubicacion    String
-  productos    DepositoProduct[]  // Relación con la tabla intermedia
-}
-
-model DepositoProduct {
-  id_deposito  Int
-  id_producto  Int
-  deposito     Deposito @relation(fields: [id_deposito], references: [id_deposito])
-  producto     Product  @relation(fields: [id_producto], references: [id_producto])
-  
-  @@id([id_deposito, id_producto])  // Clave compuesta para asegurar que no haya duplicados
+  estado_proveedor  String   @default("pendiente") // Estado de aceptación del proveedor ("pendiente", "aceptado", "rechazado")
 }
