@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 // Crear un nuevo producto
 router.post('/', async (req: Request, res: Response) => {
-  const { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio, tags } = req.body;
+  const { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio, tags , foto} = req.body;
 
   try {
     // Verificar si el proveedor existe
@@ -19,7 +19,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     const producto = await prisma.product.create({
-      data: { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio, tags },
+      data: { nombre_producto, codigo_barras, descripcion, cantidad_stock, id_proveedor, precio, tags, foto},
     });
 
     res.json(producto);
