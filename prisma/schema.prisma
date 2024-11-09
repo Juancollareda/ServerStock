@@ -31,7 +31,7 @@ model Product {
   proveedor       Proveedor @relation(fields: [id_proveedor], references: [id_proveedor])
   precio          Float
   foto            String
-  preciocompra    Int?
+  preciocompra    Int?  
   detallesPedido  OrderDetail[]
   
 }
