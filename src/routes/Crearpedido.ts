@@ -67,4 +67,106 @@ router.post('/crear', async (req: Request, res: Response) => {
   }
 });
 
+
+
+// Ruta para obtener todos los pedidos
+router.get('/ver', async (req: Request, res: Response) => {
+  try {
+    // Obtener todos los pedidos junto con sus detalles y los productos asociados
+    const pedidos = await prisma.pedido.findMany({
+      include: {
+        detalles: {
+          include: {
+            producto: true,  // Incluir la información del producto en cada detalle
+          },
+        },
+      },
+    });
+
+    res.json(pedidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los pedidos' });
+  }
+});
+
+// Ruta para obtener todos los pedidos con la información especificada
+router.get('/verpedidos', async (req: Request, res: Response) => {
+  try {
+    // Obtener todos los pedidos con solo los campos necesarios
+    const pedidos = await prisma.pedido.findMany({
+      select: {
+        fecha_pedido: true,
+        estado_pedido: true,
+        detalles: {
+          select: {
+            id_producto: true,
+            cantidad: true,
+          },
+        },
+      },
+    });
+
+    res.json(pedidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los pedidos' });
+  }
+});
+
+
+// Ruta para actualizar el estado de un pedido
+router.put('/actualizar-estado/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { estado_pedido } = req.body; // Recibe el nuevo estado del pedido en el cuerpo de la solicitud
+
+  try {
+    // Actualizar el estado del pedido con el id especificado
+    const pedidoActualizado = await prisma.pedido.update({
+      where: { id_pedido: parseInt(id) },
+      data: { estado_pedido },
+    });
+
+    res.json({
+      mensaje: 'Estado del pedido actualizado correctamente',
+      pedido: pedidoActualizado,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar el estado del pedido' });
+  }
+});
+
+
+// Ruta para obtener un pedido por id_pedido
+router.get('/ver/:id', async (req: Request, res: Response) => {
+  const { id } = req.params; // Obtiene el id del pedido desde los parámetros de la URL
+
+  try {
+    // Obtener el pedido por el id especificado, incluyendo sus detalles y los productos asociados
+    const pedido = await prisma.pedido.findUnique({
+      where: { id_pedido: parseInt(id) },
+      include: {
+        detalles: {
+          include: {
+            producto: true,  // Incluir la información del producto en cada detalle
+          },
+        },
+      },
+    });
+
+    if (!pedido) {
+      return res.status(404).json({ error: `Pedido con ID ${id} no encontrado` });
+    }
+
+    res.json(pedido);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener el pedido' });
+  }
+});
+
+
+
+
 export default router;

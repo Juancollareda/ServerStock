@@ -21,7 +21,7 @@ app.use('/productos', Productos); // Usa las rutas definidas en foto.js
 
 app.use('/provedores', Provedores); // Usa las rutas definidas en foto.js
 app.use('/cliente', cliente)
-app.use('/  ',crearpedido)
+app.use('/crearpedidos',crearpedido)
 
 const PORT = process.env.PORT || 4000;
 
