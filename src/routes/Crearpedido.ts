@@ -4,19 +4,17 @@ import { PrismaClient, Product, OrderDetail } from '@prisma/client';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Definir los tipos de los productos en el cuerpo de la solicitud
 interface ProductoInput {
   id_producto: number;
   cantidad: number;
 }
 
-// Ruta para hacer un pedido
 router.post('/crear', async (req: Request, res: Response) => {
   const { id_cliente, productos }: { id_cliente: number; productos: ProductoInput[] } = req.body;
-  // productos debe ser un array con objetos que contienen id_producto y cantidad
+ 
   
   try {
-    // Crear el pedido
+
     const nuevoPedido = await prisma.pedido.create({
       data: {
         id_cliente: id_cliente,
@@ -25,12 +23,10 @@ router.post('/crear', async (req: Request, res: Response) => {
       },
     });
 
-    // Crear los detalles de pedido
     const detallesPedido = await Promise.all(
       productos.map(async (producto: ProductoInput) => {
         const { id_producto, cantidad } = producto;
 
-        // Obtener el precio unitario del producto
         const productoData: Product | null = await prisma.product.findUnique({
           where: { id_producto: id_producto },
         });
@@ -166,6 +162,57 @@ router.get('/ver/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Ruta para obtener todos los pedidos con estado "aceptado"
+router.get('/veraceptados', async (req: Request, res: Response) => {
+  try {
+    // Obtener todos los pedidos con estado "aceptado" junto con sus detalles y los productos asociados
+    const pedidosAceptados = await prisma.pedido.findMany({
+      where: {
+        estado_pedido: 'aceptado',  // Filtrar por estado "aceptado"
+      },
+      include: {
+        detalles: {
+          include: {
+            producto: true,  // Incluir la información del producto en cada detalle
+          },
+        },
+      },
+    });
+
+    res.json(pedidosAceptados);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los pedidos aceptados' });
+  }
+});
+
+
+// Ruta para obtener todos los pedidos con estado "pendiente"
+router.get('/verpendientes', async (req: Request, res: Response) => {
+  try {
+    // Obtener todos los pedidos con estado "pendiente" con solo los campos necesarios
+    const pedidosPendientes = await prisma.pedido.findMany({
+      where: {
+        estado_pedido: 'pendiente',  // Filtrar por estado "pendiente"
+      },
+      select: {
+        fecha_pedido: true,
+        estado_pedido: true,
+        detalles: {
+          select: {
+            id_producto: true,
+            cantidad: true,
+          },
+        },
+      },
+    });
+
+    res.json(pedidosPendientes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los pedidos pendientes' });
+  }
+});
 
 
 
