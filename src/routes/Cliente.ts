@@ -75,7 +75,7 @@ router.get('/buscar/email/:email', async (req, res) => {
 // Ruta para buscar un cliente por ID
 router.get('/buscar/id/:id', async (req, res) => {
   const { id } = req.params;
-
+//hola
   try {
     const cliente = await prisma.client.findUnique({
       where: { id_cliente: parseInt(id) },
