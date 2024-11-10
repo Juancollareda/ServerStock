@@ -14,7 +14,6 @@ router.post('/crear', async (req: Request, res: Response) => {
  
   
   try {
-
     const nuevoPedido = await prisma.pedido.create({
       data: {
         id_cliente: id_cliente,
