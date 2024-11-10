@@ -22,7 +22,9 @@ const router = Router();
 
 router.post('/upload', upload.single('archivo'), (req: Request, res: Response) => {
   if (!req.file) {
+    console.log(req.file)
     return res.status(400).json({ mensaje: 'No se subió ningún archivo' });
+    
   }
   
   res.json({ mensaje: 'Archivo subido exitosamente', rutaArchivo: req.file.path });

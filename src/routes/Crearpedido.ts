@@ -213,6 +213,32 @@ router.get('/verpendientes', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/pedidos-pendientes/:id_proveedor', async (req: Request, res: Response) => {
+  const { id_proveedor } = req.params;
 
+  try {
+    const pedidosPendientes = await prisma.orderDetail.findMany({
+      where: {
+        producto: {
+          id_proveedor: Number(id_proveedor) // Filtra por proveedor
+        },
+        estado_proveedor: 'pendiente' // Solo pedidos pendientes
+      },
+      include: {
+        pedido: {
+          include: {
+            cliente: true // Incluye información del cliente para cada pedido
+          }
+        },
+        producto: true // Incluye detalles del producto
+      }
+    });
+
+    res.json(pedidosPendientes);
+  } catch (error) {
+    console.error('Error al obtener pedidos pendientes:', error);
+    res.status(500).json({ mensaje: 'Error al obtener pedidos pendientes' });
+  }
+});
 
 export default router;
