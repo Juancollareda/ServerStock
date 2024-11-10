@@ -91,5 +91,14 @@ router.get('/buscar/id/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al buscar el cliente' });
   }
 });
+router.get('/', async (req, res) => {
+  try {
+    const client = await prisma.client.findMany();
+    res.json(client);
+    console.log(req.body)
+  } catch (error) {
+    res.status(500).json({error: 'Error al obtener los cliente' });
+  }
+}); 
 
 export default router;

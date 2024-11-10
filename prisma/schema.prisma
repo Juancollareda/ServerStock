@@ -43,6 +43,7 @@ model Client {
   email        String @unique
   nombre       String
   dni          String?  // Opcional
+  foto         String?
   pedidos      Pedido[]
 }
 
