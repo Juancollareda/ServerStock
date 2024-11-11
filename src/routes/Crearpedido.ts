@@ -306,5 +306,43 @@ router.put('/actualizar-estado-detalle/:id_detalle_pedido', async (req: Request,
     res.status(500).json({ error: 'Error al actualizar el estado del detalle del pedido' });
   }
 });
+// Endpoint para obtener el estado de los pedidos de un cliente
+router.get('/estado-pedido/cliente/:id_cliente', async (req: Request, res: Response) => {
+  const { id_cliente } = req.params; // Obtener el id del cliente desde los parámetros de la URL
+
+  try {
+      const pedidos = await prisma.pedido.findMany({
+          where: {
+              id_cliente: Number(id_cliente), // Filtrar pedidos por id_cliente
+          },
+          select: {
+              id_pedido: true,
+              fecha_pedido: true,
+              detalles: {
+                  select: {
+                      id_detalle_pedido: true,
+                      cantidad: true,
+                      precio_unitario: true,
+                      estado_proveedor: true, // Estado del pedido desde el proveedor
+                      producto: {
+                          select: {
+                              nombre_producto: true,
+                          },
+                      },
+                  },
+              },
+          },
+      });
+
+      if (pedidos.length === 0) {
+          return res.status(404).json({ mensaje: 'No se encontraron pedidos para este cliente' });
+      }
+
+      res.json(pedidos); // Devuelve la lista de pedidos con los detalles
+  } catch (error) {
+      console.error('Error al obtener el estado de los pedidos:', error);
+      res.status(500).json({ mensaje: 'Error al obtener el estado de los pedidos' });
+  }
+});
 
 export default router;
