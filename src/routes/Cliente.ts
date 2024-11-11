@@ -50,7 +50,7 @@ router.put('/actualizar/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Error al actualizar el cliente' });
   }
-});
+}); 
 
 // Ruta para buscar un cliente por email
 router.get('/buscar/email/:email', async (req, res) => {
