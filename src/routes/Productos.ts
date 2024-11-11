@@ -57,12 +57,12 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 //idproverdor
-router.get('/:id_proveedor', async (req: Request, res: Response) => {
+router.get('/provedor/:id_proveedor', async (req: Request, res: Response) => {
   const { id_proveedor } = req.params;
 
   try {
-    const producto = await prisma.product.findUnique({
-      where: { id_producto: parseInt(id_proveedor) },
+    const producto = await prisma.product.findMany({
+      where: { id_proveedor: parseInt(id_proveedor) },
     });
     if (!producto) return res.status(404).json({ error: 'Producto no encontrado id_proveedor' });
     res.json(producto);
