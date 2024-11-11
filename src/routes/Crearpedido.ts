@@ -161,29 +161,6 @@ router.get('/ver/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Ruta para obtener todos los pedidos con estado "aceptado"
-router.get('/veraceptados', async (req: Request, res: Response) => {
-  try {
-    // Obtener todos los pedidos con estado "aceptado" junto con sus detalles y los productos asociados
-    const pedidosAceptados = await prisma.pedido.findMany({
-      where: {
-        estado_pedido: 'aceptado',  // Filtrar por estado "aceptado"
-      },
-      include: {
-        detalles: {
-          include: {
-            producto: true,  // Incluir la información del producto en cada detalle
-          },
-        },
-      },
-    });
-
-    res.json(pedidosAceptados);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener los pedidos aceptados' });
-  }
-});
 
 
 // Ruta para obtener todos los pedidos con estado "pendiente"
@@ -267,19 +244,43 @@ router.put('/rechazar/:id_detalle_pedido', async (req: Request, res: Response) =
     res.status(500).json({ error: 'Error al actualizar el estado del detalle del pedido' });
   }
 });
-// Ruta para cambiar el estado de un detalle de pedido a "aceptado"
 router.put('/aceptar/:id_detalle_pedido', async (req: Request, res: Response) => {
   const { id_detalle_pedido } = req.params;
 
   try {
-    // Actualizar el estado del proveedor en el detalle del pedido
+    // Obtener el detalle del pedido por su ID
+    const detallePedido = await prisma.orderDetail.findUnique({
+      where: { id_detalle_pedido: parseInt(id_detalle_pedido) },
+      include: { producto: true }, // Incluir información del producto asociado al detalle
+    });
+
+    if (!detallePedido) {
+      return res.status(404).json({ error: 'Detalle de pedido no encontrado' });
+    }
+
+    // Verificar si la cantidad de stock es suficiente
+    if (detallePedido.producto.cantidad_stock < detallePedido.cantidad) {
+      return res.status(400).json({
+        error: `No hay suficiente stock para el producto ${detallePedido.producto.nombre_producto}`,
+      });
+    }
+
+    // Actualizar el estado del detalle del pedido a "aceptado"
     const detallePedidoActualizado = await prisma.orderDetail.update({
       where: { id_detalle_pedido: parseInt(id_detalle_pedido) },
       data: { estado_proveedor: 'aceptado' },
     });
 
+    // Reducir el stock del producto asociado al detalle del pedido
+    await prisma.product.update({
+      where: { id_producto: detallePedido.producto.id_producto },
+      data: {
+        cantidad_stock: detallePedido.producto.cantidad_stock - detallePedido.cantidad,
+      },
+    });
+
     res.json({
-      mensaje: 'Estado del detalle del pedido actualizado a aceptado correctamente',
+      mensaje: 'Estado del detalle del pedido actualizado a aceptado y stock reducido correctamente',
       detallePedido: detallePedidoActualizado,
     });
   } catch (error) {
