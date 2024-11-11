@@ -224,13 +224,20 @@ router.get('/pedidos-pendientes/:id_proveedor', async (req: Request, res: Respon
         },
         estado_proveedor: 'pendiente' // Solo pedidos pendientes
       },
-      include: {
+      select: {
+        id_detalle_pedido: true,
+        cantidad: true,
+        estado_proveedor: true,
         pedido: {
-          include: {
-            cliente: true // Incluye información del cliente para cada pedido
+          select: {
+            fecha_pedido: true
           }
         },
-        producto: true // Incluye detalles del producto
+        producto: {
+          select: {
+            nombre_producto: true
+          }
+        }
       }
     });
 
@@ -238,6 +245,65 @@ router.get('/pedidos-pendientes/:id_proveedor', async (req: Request, res: Respon
   } catch (error) {
     console.error('Error al obtener pedidos pendientes:', error);
     res.status(500).json({ mensaje: 'Error al obtener pedidos pendientes' });
+  }
+});
+// Ruta para cambiar el estado de un detalle de pedido a "rechazado"
+router.put('/rechazar/:id_detalle_pedido', async (req: Request, res: Response) => {
+  const { id_detalle_pedido } = req.params;
+
+  try {
+    // Actualizar el estado del proveedor en el detalle del pedido
+    const detallePedidoActualizado = await prisma.orderDetail.update({
+      where: { id_detalle_pedido: parseInt(id_detalle_pedido) },
+      data: { estado_proveedor: 'rechazado' },
+    });
+
+    res.json({
+      mensaje: 'Estado del detalle del pedido actualizado a rechazado correctamente',
+      detallePedido: detallePedidoActualizado,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar el estado del detalle del pedido' });
+  }
+});
+// Ruta para cambiar el estado de un detalle de pedido a "aceptado"
+router.put('/aceptar/:id_detalle_pedido', async (req: Request, res: Response) => {
+  const { id_detalle_pedido } = req.params;
+
+  try {
+    // Actualizar el estado del proveedor en el detalle del pedido
+    const detallePedidoActualizado = await prisma.orderDetail.update({
+      where: { id_detalle_pedido: parseInt(id_detalle_pedido) },
+      data: { estado_proveedor: 'aceptado' },
+    });
+
+    res.json({
+      mensaje: 'Estado del detalle del pedido actualizado a aceptado correctamente',
+      detallePedido: detallePedidoActualizado,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar el estado del detalle del pedido' });
+  }
+});
+router.put('/actualizar-estado-detalle/:id_detalle_pedido', async (req: Request, res: Response) => {
+  const { id_detalle_pedido } = req.params;
+  const { estado_proveedor } = req.body; // Recibe el nuevo estado del proveedor
+
+  try {
+    const detallePedidoActualizado = await prisma.orderDetail.update({
+      where: { id_detalle_pedido: parseInt(id_detalle_pedido) },
+      data: { estado_proveedor },
+    });
+
+    res.json({
+      mensaje: 'Estado del detalle del pedido actualizado correctamente',
+      detallePedido: detallePedidoActualizado,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar el estado del detalle del pedido' });
   }
 });
 
