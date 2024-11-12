@@ -38,12 +38,12 @@ router.delete('/eliminar/:id', async (req, res) => {
 // Ruta para actualizar un cliente por ID
 router.put('/actualizar/:id', async (req, res) => {
   const { id } = req.params;
-  const { usuario, contrasena, email, nombre, dni } = req.body;
+  const { usuario, contrasena, email, nombre, dni, foto } = req.body;
 
   try {
     const clienteActualizado = await prisma.client.update({
       where: { id_cliente: parseInt(id) },
-      data: { usuario, contrasena, email, nombre, dni },
+      data: { usuario, contrasena, email, nombre, dni, foto },
     });
     res.json({ mensaje: 'Cliente actualizado exitosamente', cliente: clienteActualizado });
   } catch (error) {
