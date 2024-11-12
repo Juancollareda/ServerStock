@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Para parsear formularios
 app.use('/foto', foto); // Usa las rutas definidas en foto.js
 app.use('/productos', Productos); // Usa las rutas definidas en foto.js
-app.use('/provedores', Provedores); // Usa las rutas definidas en foto.js
+app.use('/provedores', Provedores); // Us a las rutas definidas en foto.js
 app.use('/cliente', cliente)
 app.use('/crearpedidos',crearpedido)
 app.use('/resumen',resumen)
