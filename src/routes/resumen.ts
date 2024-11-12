@@ -19,6 +19,7 @@ router.get('/ingresos-y-gastos/:id_proveedor', async (req: Request, res: Respons
                 nombre_producto: true,
                 precio: true, // Precio de venta
                 preciocompra: true, // Precio de compra
+                cantidad_stock: true, // Cantidad de stock
                 detallesPedido: {
                     where: {
                         estado_proveedor: 'aceptado', // Solo los pedidos aceptados
@@ -42,9 +43,9 @@ router.get('/ingresos-y-gastos/:id_proveedor', async (req: Request, res: Respons
                 cantidadVendida += detalle.cantidad;
             });
 
-            // Calcular los ingresos (lo que se vendió) y los costos (lo que costó el stock)
+            // Calcular los ingresos (lo que se vendió) y los costos (con base en el stock y precio de compra)
             const ingresos = cantidadVendida * producto.precio; // Ingresos por ventas
-            const costos = cantidadVendida * (producto.preciocompra || 0); // Costos de lo vendido
+            const costos = producto.cantidad_stock * (producto.preciocompra || 0); // Costos según el stock y precio de compra
             const ganancias = ingresos - costos; // Ganancia
 
             return {
@@ -53,7 +54,7 @@ router.get('/ingresos-y-gastos/:id_proveedor', async (req: Request, res: Respons
                 ingresos,
                 costos,
                 ganancias,
-                perdida: costos - ingresos, // Pérdida
+                perdida: costos > ingresos ? costos - ingresos : 0, // Pérdida solo si los costos superan los ingresos
             };
         });
 
@@ -65,3 +66,4 @@ router.get('/ingresos-y-gastos/:id_proveedor', async (req: Request, res: Respons
 });
 
 export default router;
+
