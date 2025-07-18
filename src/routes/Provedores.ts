@@ -49,14 +49,24 @@ router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const { nombre, email, telefono, direccion, nombre_empresa, dni, foto } = req.body;
 
+  // Log de entrada para debug
+  console.log('PUT /provedores/:id', { id, body: req.body });
+
+  // Validación básica
+  if (!id || isNaN(Number(id))) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
+
   try {
     const proveedor = await prisma.proveedor.update({
-      where: { id_proveedor: parseInt(id) },
+      where: { id_proveedor: Number(id) },
       data: { nombre, email, telefono, direccion, nombre_empresa, dni, foto },
     });
     res.json(proveedor);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al actualizar el proveedor' });
+  } catch (error: any) {
+    console.error('Error en PUT /provedores/:id:', error);
+    // Prisma puede lanzar errores útiles en error.meta
+    res.status(500).json({ error: 'Error al actualizar el proveedor', detalle: error?.meta || error?.message || error });
   }
 });
 
