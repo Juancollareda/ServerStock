@@ -3,67 +3,66 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "sqlite" // o "postgresql" o "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Proveedor {
-  id_proveedor   Int      @id @default(autoincrement())
+  id_proveedor   Int       @id @default(autoincrement())
   nombre         String
   email          String
   contrasenia    String
-  telefono       String?  // Opcional
-  direccion      String?  // Opcional
-  nombre_empresa String?  // Opcional
-  dni            String?  // Opcional
-  foto           String   // Ruta de archivo
-  articulos      Product[]  // Relación con productos
+  telefono       String?
+  direccion      String?
+  nombre_empresa String?
+  dni            String?
+  foto           String
+  articulos      Product[]
 }
 
 model Product {
-  id_producto    Int      @id @default(autoincrement())
+  id_producto     Int        @id @default(autoincrement())
   nombre_producto String
   codigo_barras   String
   descripcion     String
   cantidad_stock  Int
-  tags            String  // Opcional
+  tags            String
   id_proveedor    Int
-  proveedor       Proveedor @relation(fields: [id_proveedor], references: [id_proveedor])
+  proveedor       Proveedor  @relation(fields: [id_proveedor], references: [id_proveedor], onDelete: Cascade)
   precio          Float
   foto            String
-  preciocompra    Int?  
+  preciocompra    Int?
   detallesPedido  OrderDetail[]
-  
 }
 
 model Client {
-  id_cliente   Int      @id @default(autoincrement())
-  usuario      String
-  contrasena   String  // Cifrada
-  email        String @unique
-  nombre       String
-  dni          String?  // Opcional
-  foto         String?
-  pedidos      Pedido[]
+  id_cliente  Int      @id @default(autoincrement())
+  usuario     String
+  contrasena  String
+  email       String   @unique
+  nombre      String
+  dni         String?
+  foto        String?
+  pedidos     Pedido[]
 }
 
 model Pedido {
-  id_pedido    Int      @id @default(autoincrement())
-  id_cliente   Int
-  fecha_pedido DateTime
+  id_pedido     Int          @id @default(autoincrement())
+  id_cliente    Int
+  fecha_pedido  DateTime
   estado_pedido String
-  cliente      Client @relation(fields: [id_cliente], references: [id_cliente])
-  detalles     OrderDetail[]
+  cliente       Client       @relation(fields: [id_cliente], references: [id_cliente], onDelete: Cascade)
+  detalles      OrderDetail[]
 }
 
 model OrderDetail {
-  id_detalle_pedido Int    @id @default(autoincrement())
+  id_detalle_pedido Int      @id @default(autoincrement())
   id_pedido         Int
   id_producto       Int
   cantidad          Int
   precio_unitario   Float
-  direccion         String?  // Opcional
-  pedido            Pedido   @relation(fields: [id_pedido], references: [id_pedido])
-  producto          Product  @relation(fields: [id_producto], references: [id_producto])
-  estado_proveedor  String   @default("pendiente") // Estado de aceptación del proveedor ("pendiente", "aceptado", "rechazado")
+  direccion         String?
+  pedido            Pedido   @relation(fields: [id_pedido], references: [id_pedido], onDelete: Cascade)
+  producto          Product  @relation(fields: [id_producto], references: [id_producto], onDelete: Cascade)
+  estado_proveedor  String   @default("pendiente")
 }

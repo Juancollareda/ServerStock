@@ -28,9 +28,10 @@ router.delete('/eliminar/:id', async (req, res) => {
     await prisma.client.delete({
       where: { id_cliente: parseInt(id) },
     });
+
     res.json({ mensaje: 'Cliente eliminado exitosamente' });
   } catch (error) {
-    console.error(error);
+    console.error('Error al eliminar cliente:', error);
     res.status(500).json({ error: 'Error al eliminar el cliente' });
   }
 });

@@ -71,19 +71,20 @@ router.put('/:id', async (req: Request, res: Response) => {
 });
 
 // Eliminar un proveedor
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/eliminar/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    await prisma.proveedor.delete({
-      where: { id_proveedor: parseInt(id) },
+    await prisma.client.delete({
+      where: { id_cliente: parseInt(id) },
     });
-    res.json({ message: 'Proveedor eliminado' });
+
+    res.json({ mensaje: 'Cliente eliminado exitosamente' });
   } catch (error) {
-    res.status(500).json({ error: 'Error al eliminar el proveedor' });
+    console.error('Error al eliminar cliente:', error);
+    res.status(500).json({ error: 'Error al eliminar el cliente' });
   }
 });
-
 
 // Obtener un proveedor por email
 router.get('/email/:email', async (req: Request, res: Response) => {
